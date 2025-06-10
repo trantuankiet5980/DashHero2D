@@ -6,12 +6,14 @@ public class PLayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 15f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
+    private Animator animator;
     private bool isGrounded;
     private Rigidbody2D rb;
 
     private void Awake()
     {
         // Ensure the Rigidbody2D component is present
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
@@ -31,6 +33,8 @@ public class PLayerController : MonoBehaviour
         HandleMovement();
         // Handle player jump input
         HandleJump();
+        // Update the animation state based on movement and jump status
+        UpdateAnimation();
     }
     private void HandleMovement()
     {
@@ -48,5 +52,12 @@ public class PLayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+    private void UpdateAnimation()
+    {
+        bool isRunning = Mathf.Abs(rb.linearVelocity.x) > 0.1f;
+        bool isJumping = !isGrounded;
+        animator.SetBool("isRunning", isRunning);
+        animator.SetBool("isJumping", isJumping);
     }
 }
