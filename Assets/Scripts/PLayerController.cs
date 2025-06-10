@@ -4,6 +4,9 @@ public class PLayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 15f;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Transform groundCheck;
+    private bool isGrounded;
     private Rigidbody2D rb;
 
     private void Awake()
@@ -29,7 +32,6 @@ public class PLayerController : MonoBehaviour
         // Handle player jump input
         HandleJump();
     }
-    // FixedUpdate is called at a fixed interval and is used for physics calculations
     private void HandleMovement()
     {
         // Get input from the horizontal and vertical axes
@@ -40,9 +42,11 @@ public class PLayerController : MonoBehaviour
     }
     private void HandleJump()
     {
-        if(Input.GetButtonDown("Jump"))
+        // Check if the player is grounded
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 }
